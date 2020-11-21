@@ -63,14 +63,14 @@ function! s:MakeWorkspace(workspace_save_session)
     let s:workspace_save_session = 1
     execute printf('mksession! %s', s:GetSessionFilename())
 
-    call s:DoSaveAutoCommands()
+    call s:DoPostSaveAutoCommands()
   endif
 endfunction
 
-function! s:DoSaveAutoCommands()
+function! s:DoPostSaveAutoCommands()
 
-  if exists('#User#WorkspaceSave')
-    doautocmd User WorkspaceSave
+  if exists('#User#WorkspacePostSave')
+    doautocmd User WorkspacePostSave
   endif
 
 endfunction
