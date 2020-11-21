@@ -14,29 +14,49 @@
 Toggling the `ToggleWorkspace` command on will persistently track your session found in a current working directory, and all workspace features will be enabled. Conversely, toggling the command off will remove the session and disable the workspace features.
 
 If Vim is run with a file argument and it's already in the session's workspace, Vim will load the session and go to the tab window that contains it. Otherwise, it will be loaded as a new tab in the session. If you would rather create a new buffer in the existing tab instead of creating a new tab:
-```
+```viml
 let g:workspace_create_new_tabs = 0  " enabled = 1 (default), disabled = 0
 ```
 
 It is recommended you bind this command to a convenient shortcut, such as the following:
-```
+```viml
 nnoremap <leader>s :ToggleWorkspace<CR>
 ```
 The following default can be configured if you wish to change the session name:
-```
+```viml
 let g:workspace_session_name = 'Session.vim'
 ```
 
 Use `g:workspace_session_directory` to save all your session files in a single directory outside of your workspace. Example:
-```
+```viml
 let g:workspace_session_directory = $HOME . '/.vim/sessions/'
 ```
 Note: this will use the workspace directory as the session file name, overriding `g:workspace_sesssion_name`.
 
 If you'd like sessions to not load if you're explicitly loading a file in a workspace directory (as opposed to an argument-less `vim`), the following in your vimrc will provide that behaviour:
-```
+```viml
 let g:workspace_session_disable_on_args = 1
 ```
+
+By default vim-workspace uses "%" as replacement char for slashes ("/") in
+sessions file names. You can override that with something like:
+```viml
+let g:workspace_dir_replace_char = '_'
+```
+
+Extend the session file. One may want to add commands and other stuff to the
+session file, vim-workspace registers a custom autocommand to allow users
+to append content to the session file.
+
+```viml
+autocmd User WorkspacePostSave call s:save_to_session()
+```
+
+inside `s:save_to_session` users must call:
+```viml
+call g:WorkspaceSessionAddLine(["let g:my_var=42", "let g:my_var_2=24"])
+```
+
 
 #### Hidden Buffers
 Over time, hidden buffers can build up to a point where most are unnecessary, with only those currently tied to a tab window being important.
