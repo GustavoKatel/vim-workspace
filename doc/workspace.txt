@@ -39,6 +39,18 @@ in a workspace directory (as opposed to an argument-less `vim`), the following
 in your vimrc will provide that behaviour:
 `let g:workspace_session_disable_on_args = 1`
 
+By default vim-workspace uses "%" as replacement char for slashes ("/") in
+sessions file names. You can override that with something like:
+`let g:workspace_dir_replace_char = '_'`
+
+Extend the session file. One may want to add commands and other stuff to the
+session file, vim-workspace registers a custom autocommand to allow users
+to append content to the session file.
+`autocmd User WorkspacePostSave call s:save_to_session()`
+
+inside `s:save_to_session` users must call:
+`call g:WorkspaceSessionAddLine(["let g:my_var=42", "let g:my_var_2=24"])`
+
 ------------------------------------------------------------------------------
 1.1. Hidden Buffers                         *workspace-hidden-buffers*
 Over time, hidden buffers can build up to a point where most are unnecessary,
