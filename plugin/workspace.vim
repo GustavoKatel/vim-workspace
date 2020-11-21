@@ -48,17 +48,31 @@ function! s:IsAbsolutePath(path)
   return (fnamemodify(a:path, ':p') == a:path)
 endfunction
 
+function! s:GetSessionFilename()
+    if s:IsSessionDirectoryUsed()
+      return escape(s:GetSessionDirectoryPath(), '%')
+    elseif s:IsAbsolutePath(g:workspace_session_name)
+      return g:workspace_session_name
+    else
+      return printf('%s/%s', getcwd(), g:workspace_session_name)
+    endif
+endfunction
+
 function! s:MakeWorkspace(workspace_save_session)
   if a:workspace_save_session == 1 || get(s:, 'workspace_save_session', 0) == 1
     let s:workspace_save_session = 1
-    if s:IsSessionDirectoryUsed()
-      execute printf('mksession! %s', escape(s:GetSessionDirectoryPath(), '%'))
-    elseif s:IsAbsolutePath(g:workspace_session_name)
-      execute printf('mksession! %s', g:workspace_session_name)
-    else
-      execute printf('mksession! %s/%s', getcwd(), g:workspace_session_name)
-    endif
+    execute printf('mksession! %s', s:GetSessionFilename())
+
+    call s:DoSaveAutoCommands()
   endif
+endfunction
+
+function! s:DoSaveAutoCommands()
+
+  if exists('#User#WorkspaceSave')
+    doautocmd User WorkspaceSave
+  endif
+
 endfunction
 
 function! s:FindOrNew(filename)
@@ -244,11 +258,23 @@ function! s:PostLoadCleanup()
   if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endfunction
 
+function! g:WorkspaceSessionAddLine(line)
+  let filename = s:GetSessionFilename()
+
+  let l:lines = a:line
+  if type(a:line) != type([])
+    let l:lines = [a:line]
+  endif
+
+  call writefile(l:lines, filename, "a")
+endfunction
+
+
 augroup Workspace
   au! VimEnter * nested call s:LoadWorkspace()
   au! StdinReadPost * let s:read_from_stdin = 1
-  au! VimLeave * call s:MakeWorkspace(0)
-  au! UILeave * call s:MakeWorkspace(0)
+  au! VimLeave * nested call s:MakeWorkspace(0)
+  au! UILeave * nested call s:MakeWorkspace(0)
   au! InsertLeave * if getcmdwintype() == '' && pumvisible() == 0|pclose|endif
   au! SessionLoadPost * call s:PostLoadCleanup()
 augroup END
