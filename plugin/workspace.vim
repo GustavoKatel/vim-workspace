@@ -17,6 +17,7 @@ let g:workspace_autocreate = get(g:, 'workspace_autocreate', 0)
 let g:workspace_nocompatible = get(g:, 'workspace_nocompatible', 1)
 let g:workspace_session_directory = get(g:, 'workspace_session_directory', '')
 let g:workspace_create_new_tabs = get(g:, 'workspace_create_new_tabs', 1)
+let g:workspace_dir_replace_char = get(g:, 'workspace_dir_replace_char', '%')
 
 function! s:IsSessionDirectoryUsed()
   return !empty(g:workspace_session_directory)
@@ -27,7 +28,7 @@ function! s:GetSessionDirectoryPath()
     call mkdir(g:workspace_session_directory)
   endif
   let l:cwd = getcwd()
-  let l:fileName = substitute(l:cwd, '/', '%', 'g')
+  let l:fileName = substitute(l:cwd, '/', g:workspace_dir_replace_char, 'g')
   let l:fullPath = g:workspace_session_directory . l:fileName
   return l:fullPath
 endfunction
