@@ -274,7 +274,11 @@ endfunction
 augroup Workspace
   au! VimEnter * nested call s:LoadWorkspace()
   au! StdinReadPost * let s:read_from_stdin = 1
-  au! UILeave * nested call s:MakeWorkspace(0)
+
+  if has('nvim')
+    au! UILeave * nested call s:MakeWorkspace(0)
+  endif
+
   au! VimLeave * call s:MakeWorkspace(0)
   if exists('*getcmdwintype')
     au! InsertLeave * if empty(getcmdwintype()) && pumvisible() == 0|pclose|endif
