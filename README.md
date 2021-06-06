@@ -11,6 +11,11 @@
 
 #### Persistent Vim Session
 
+Session tracking can be activated automatically (disabled by default):
+```
+let g:workspace_autocreate = 1
+```
+
 Toggling the `ToggleWorkspace` command on will persistently track your session found in a current working directory, and all workspace features will be enabled. Conversely, toggling the command off will remove the session and disable the workspace features.
 
 If Vim is run with a file argument and it's already in the session's workspace, Vim will load the session and go to the tab window that contains it. Otherwise, it will be loaded as a new tab in the session. If you would rather create a new buffer in the existing tab instead of creating a new tab:
@@ -94,10 +99,11 @@ If you would like to disable autosave for some reason (i.e. too much IO on disk)
 let g:workspace_autosave = 0
 ```
 
-#### Untrailing Spaces
-By default, all trailing spaces are trimmed before a buffer is autosaved. If you don't prefer this behaviour, add this line:
+#### Untrailing Spaces & Untrailing Tabs
+By default, all trailing spaces and tabs are trimmed before a buffer is autosaved. If you don't prefer this behaviour, add this line:
 ```
 let g:workspace_autosave_untrailspaces = 0
+let g:workspace_autosave_untrailtabs = 0
 ```
 
 #### Ignore List
